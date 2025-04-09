@@ -1,4 +1,4 @@
-export const gallery = document.querySelector('.pics')
+export const gallery = document.querySelector('.gallery')
 
 export default function createMarkup(arr) {
     return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => 

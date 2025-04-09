@@ -10,7 +10,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 const button = document.querySelector('.button')
 const form = document.querySelector('.form')
 const loader = document.querySelector('.loader')
-let lightbox = new SimpleLightbox('.pics a')
+let lightbox = new SimpleLightbox('.gallery a')
 let btn = document.querySelector('.btn')
 let query = ''
 
