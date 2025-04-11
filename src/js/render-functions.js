@@ -1,4 +1,8 @@
+import SimpleLightbox from "simplelightbox"
+import "simplelightbox/dist/simple-lightbox.min.css"
+
 export const gallery = document.querySelector('.gallery')
+export let lightbox = new SimpleLightbox('.gallery a')
 
 export default function createMarkup(arr) {
     return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => 
@@ -18,4 +22,11 @@ export default function createMarkup(arr) {
     </li>
     `
     ).join(''); 
+}
+
+
+export function renderGallery(arr) {
+  const markup = createMarkup(arr);
+  gallery.insertAdjacentHTML('beforeend', markup);
+  lightbox.refresh();
 }

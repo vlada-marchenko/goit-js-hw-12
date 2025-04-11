@@ -8,6 +8,7 @@ export default defineConfig(({ command }) => {
   return {
     define: {
       [command === 'serve' ? 'global' : '_global']: {},
+    '__PIXABAY_API_KEY__': JSON.stringify('48786073-6183322621e5d0cfd6fc221bb')
     },
     root: 'src',
     build: {
