@@ -1,5 +1,4 @@
 import axios from "axios"
-import createMarkup, { gallery } from './render-functions.js';
 
 export const input = document.querySelector('.input')
 export let page = 1
@@ -8,18 +7,24 @@ export let totalPages = 0
 
 export function resetPage() {
     page = 1
+    totalPages = 0
 }
 
-const api_key = __PIXABAY_API_KEY__
+const api_key = '48786073-6183322621e5d0cfd6fc221bb'
 
 
 export default async function request(query, currentPage) {
     if(!query) {
-        return Promise.resolve([])
+        return Promise.resolve({ hits: [], totalHits: 0 });
+        // return Promise.resolve(null)
     }
 
-    // if (totalPages !== 0 && currentPage > totalPages) {
+    // if (totalPages && currentPage > totalPages) {
     //     return Promise.resolve([]);
+    // }
+
+    // if (totalPages && currentPage > totalPages) {
+    //     return { hits: [], totalHits: 0 };
     // }
 
     try {
@@ -35,15 +40,27 @@ export default async function request(query, currentPage) {
         }
     })
 
-    const totalHits = fetch.data.totalHits
-    totalPages = Math.ceil(totalHits / perPage)
+    const { totalHits, hits } = fetch.data;
+    totalPages = Math.ceil(totalHits / perPage);
+
+    // if (currentPage > totalPages && totalPages !== 0) {
+    //     return { hits: [], totalHits };
+    //   }
+
+    // const totalHits = fetch.data.totalHits
+    // totalPages = Math.ceil(totalHits / perPage)
 
     //  if (currentPage > totalPages) {
     //   return []
     // }
 
-    return fetch.data.hits
+    return { hits, totalHits }
 } catch(err)  {
-        return []
+        console.error('API request failed:', err)
+        return { hits: [], totalHits: 0 }
 }
+}
+
+export function incrementPage() {
+    page += 1;
 }

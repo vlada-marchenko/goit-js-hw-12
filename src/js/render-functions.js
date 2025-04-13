@@ -2,6 +2,8 @@ import SimpleLightbox from "simplelightbox"
 import "simplelightbox/dist/simple-lightbox.min.css"
 
 export const gallery = document.querySelector('.gallery')
+export const loader = document.querySelector('.loader')
+export const loadMoreButton = document.querySelector('.load-more')
 export let lightbox = new SimpleLightbox('.gallery a')
 
 export default function createMarkup(arr) {
@@ -21,12 +23,18 @@ export default function createMarkup(arr) {
       </a>
     </li>
     `
-    ).join(''); 
+    ).join('')
 }
 
 
 export function renderGallery(arr) {
-  const markup = createMarkup(arr);
-  gallery.insertAdjacentHTML('beforeend', markup);
+  const markup = createMarkup(arr)
+  gallery.insertAdjacentHTML('beforeend', markup)
   lightbox.refresh();
 }
+
+export function clearGallery() {
+  gallery.innerHTML = ''
+}
+
+

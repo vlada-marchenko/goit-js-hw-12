@@ -1,20 +1,24 @@
-import request, { input, page, perPage, totalPages, resetPage } from "./js/pixabay-api.js";
-import createMarkup, { gallery, renderGallery } from "./js/render-functions.js";
+import request, { input, page, totalPages, resetPage, incrementPage } from "./js/pixabay-api.js";
+import { 
+    renderGallery, 
+    clearGallery
+  } from './js/render-functions.js'
 
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-const button_search = document.querySelector('.button')
+// const button_search = document.querySelector('.button')
 const form = document.querySelector('.form')
 const loader = document.querySelector('.loader')
-let btn_load = document.querySelector('.btn')
+let btnLoad = document.querySelector('.btn')
 let query = ''
 let currentPage = 1;
 
+
 form.addEventListener('submit', handleSubmit)
-btn_load.addEventListener('click', handleClick)
+btnLoad.addEventListener('click', handleClick)
 
 function showElement(element) {
     element.style.display = 'block'
@@ -29,76 +33,84 @@ async function handleSubmit(evt) {
 
     showElement(loader)
     query = input.value.trim()
-    gallery.innerHTML = ''
-    currentPage = 1;
+
+    if (!query) {
+        hideElement(loader)
+        return
+    }
+
+    clearGallery()
+    // currentPage = 1;
     resetPage()
+    // currentPage = 1
 
         try {
-        const data = await request(query, currentPage)
+            const { hits, totalHits } = await request(query, page)
 
-        if (data.length === 0) {
+        if (!hits.length) {
             iziToast.error({
                 message: 'Sorry, there are no images matching your search query. Please try again!',
                 position: "bottomRight"
             });
-            hideElement(btn_load)
+            hideElement(btnLoad)
             return
         } 
 
-        renderGallery(data);
+        renderGallery(hits)
 
         
+        // const totalPages = Math.ceil(data.totalHits / perPage)
 
-        if (page <= totalPages) {
-            showElement(btn_load)
+        if (page < totalPages) {
+            showElement(btnLoad)
         } else {
-            hideElement(btn_load)
+            hideElement(btnLoad)
         }
 
-        currentPage += 1;
 
     } catch (err) {
         console.error(err)
+        hideElement(btnLoad)
     } finally {
         hideElement(loader)
+        // form.reset()
     }
 
-    form.reset()
+
 }
 
 async function handleClick() {
     showElement(loader)
-
+    incrementPage()
 
     try {
-        const data = await request(query, currentPage)
+        const { hits } = await request(query, page)
 
-        if (!data.length) {
+        if (!hits.length) {
             iziToast.info({
                 message: "We're sorry, but you've reached the end of search results.",
                 position: "bottomRight"
             })
-            hideElement(btn_load)
+            hideElement(btnLoad)
             return
         }
 
-        renderGallery(data);
-
-
+        renderGallery(hits)
         scroll()
 
-        if(page > totalPages) {
+        // const totalPages = Math.ceil(data.totalHits / perPage)
+
+        if (page  >= totalPages) {
+            hideElement(btnLoad)
             iziToast.info({
                 message: "We're sorry, but you've reached the end of search results.",
                 position: "bottomRight"
-            })
-            hideElement(btn_load)
+            });
         }
-
-        currentPage += 1;
 
     } catch (err) {
         console.error(err)
+        hideElement(btnLoad)
     } finally {
         hideElement(loader)
     }
